@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Fake News - Deber de Informática</title>
+    <style>
+        /* --- ESTILOS GENERALES Y COLORES CON PATRÓN RETRO --- */
+        body {
+            background-color: #F7F3E8; 
+            background-image: radial-gradient(#D4B895 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #4A3B32; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        header {
+            background-color: #D4B895; 
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            color: #4A3B32;
+            letter-spacing: 2px;
+        }
+
+        /* --- ESTRUCTURA PRINCIPAL DE 3 COLUMNAS --- */
+        .contenedor-principal {
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            max-width: 1300px;
+            margin: 40px auto;
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        @media (max-width: 1050px) {
+            .contenedor-principal {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Columna Izquierda: Noticias de la Comunidad y Encuesta */
+        .columna-noticias {
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+            border: 2px dashed #C2A78D;
+        }
+
+        /* Columna Central: La Historia */
+        .columna-izquierda {
+            background-color: #FFFFFF;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Columna Derecha: Reproductor / Cortina */
+        .columna-derecha {
+            background-color: #E8D8C4;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 8px solid #C2A78D;
+            box-shadow: -4px 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            text-align: center;
+        }
+
+        /* --- TARJETAS DE NOTICIAS --- */
+        .tarjeta-noticia {
+            display: block;
+            background: #F7F3E8;
+            padding: 10px 12px;
+            margin-top: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4A3B32;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .tarjeta-noticia:hover {
+            transform: scale(1.02);
+        }
+
+        /* --- SECCIÓN DE ENCUESTA --- */
+        .seccion-encuesta {
+            background: #F7F3E8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #D4B895;
+            text-align: center;
+        }
+        .seccion-encuesta label {
+            display: block;
+            background: white;
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .seccion-encuesta label:hover {
+            background: #E8D8C4;
+        }
+
+        /* --- REPRODUCTOR DE MÚSICA Y VINILO --- */
+        .disco-contenedor {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+        }
+
+        .disco {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 10px solid #222;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .disco::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: #E8D8C4;
+            border-radius: 50%;
+            border: 2px solid #222;
+        }
+
+        .girando {
+            animation: rotarDisco 4s linear infinite;
+        }
+
+        @keyframes rotarDisco {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- NOTAS MUSICALES FLOTANTES (CORREGIDO) --- */
+        .nota-musical {
+            position: absolute;
+            font-size: 26px;
+            color: #8C6B52;
+            pointer-events: none;
+            z-index: 9999;
+            animation: flotarNota 1.8s ease-out forwards;
+        }
+        @keyframes flotarNota {
+            0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-20px) scale(1.2) rotate(15deg); }
+            100% { transform: translateY(-130px) scale(1.5) rotate(-20deg); opacity: 0; }
+        }
+
+        /* --- BOTONES DEL REPRODUCTOR --- */
+        .controles {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: #8C6B52;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #6B4F3B;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* --- PIE DE PÁGINA --- */
+        footer {
+            background-color: #D4B895;
+            color: #4A3B32;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            box-shadow: 0 -4px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>FAKE NEWS</h1>
+        <p style="margin:0; font-size: 1.2em; color: #6B4F3B;">El peligro de la desinformación en un clic</p>
+    </header>
+
+    <div class="contenedor-principal">
+        
+        <!-- COLUMNA IZQUIERDA: NOTICIAS DE LA COMUNIDAD Y ENCUESTA -->
+        <div class="columna-noticias">
+            <h3 style="margin-top: 0; color: #8C6B52; border-bottom: 2px solid #D4B895; padding-bottom: 8px; font-size: 1.1em;">📰 Noticias de la comunidad</h3>
+            
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Estudiante aprueba matemáticas durmiendo con el libro</h4>
+                <p style="margin: 0; font-size: 0.8em;">Expertos confirman que el conocimiento entró por ósmosis.</p>
+            </a>
+            
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Descubren que el pan con café cura la tristeza</h4>
+                <p style="margin: 0; font-size: 0.8em;">El azúcar engaña al cerebro y al corazón con éxito.</p>
+            </a>
+
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Perro asiste a clases y le dan mención honorífica</h4>
+                <p style="margin: 0; font-size: 0.8em;">Fue el único atento durante toda la clase de física.</p>
+            </a>
+
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Se cae el internet y medio colegio respira por primera vez</h4>
+                <p style="margin: 0; font-size: 0.8em;">Estudiantes se ven las caras por 10 minutos seguidos.</p>
+            </a>
+
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Profesor olvida su café y declara día libre</h4>
+                <p style="margin: 0; font-size: 0.8em;">La falta de cafeína paralizó sus funciones evaluativas.</p>
+            </a>
+
+            <a href="#" class="tarjeta-noticia" onclick="event.preventDefault()">
+                <h4 style="margin: 0 0 3px 0; font-size: 0.9em;">Venden lapicero "bendito" para los exámenes</h4>
+                <p style="margin: 0; font-size: 0.8em;">Aseguran que escribe solo las respuestas correctas.</p>
+            </a>
+
+            <!-- ENCUESTA RÁPIDA -->
+            <div class="seccion-encuesta">
+                <h4 style="margin: 0 0 8px 0; color: #8C6B52; font-size: 0.95em;">📊 Encuesta rápida</h4>
+                <p style="margin: 0 0 10px 0; font-size: 0.85em;">¿Alguna vez creíste en un chisme falso?</p>
+                <label><input type="radio" name="encuesta"> Sí, caí completito</label>
+                <label><input type="radio" name="encuesta"> No, siempre investigo</label>
+                <label><input type="radio" name="encuesta"> Solo si era muy chistoso</label>
+            </div>
+        </div>
+
+        <!-- COLUMNA CENTRAL: LA HISTORIA -->
+        <div class="columna-izquierda">
+            <h2 style="color: #8C6B52; border-bottom: 2px solid #D4B895; padding-bottom: 10px;">El caso de Fabián</h2>
+            
+            <p>Fabián era conocido en el colegio como el chico tranquilo que pasaba los recreos sentado bajo los árboles del patio principal, casi siempre acompañado de su guitarra celeste. Prefería pasar desapercibido, practicando acordes y escuchando música indie folk en sus audífonos en lugar de meterse en los dramas típicos de su curso. Sin embargo, su paz se vio interrumpida de forma repentina una mañana de martes, cuando su teléfono comenzó a vibrar sin parar. Una cuenta anónima de chismes del colegio en redes sociales había publicado una "noticia de última hora" con su nombre en mayúsculas, captando la atención de todos los estudiantes en cuestión de minutos y cambiando por completo el ambiente de los pasillos.</p>
+
+            <p>La publicación afirmaba de manera rotunda que Fabián había agredido físicamente a una compañera de otro curso a la salida del colegio, acompañando la grave acusación con una fotografía borrosa y sacada totalmente de contexto donde parecía que él levantaba la mano de forma amenazante. La noticia falsa se propagó como la pólvora a través de todos los grupos de WhatsApp de la institución, generando indignación inmediata sin que nadie se detuviera a cuestionar la veracidad de la fuente. De un momento a otro, Fabián notó cómo sus compañeros lo miraban con desprecio, le susurraban al pasar y se apartaban de él, dejándolo sumido en una profunda confusión y angustia al ser juzgado por algo que jamás había hecho.</p>
+
+            <p>Afortunadamente, su compañera Martina sabía perfectamente que Fabián era incapaz de hacer algo así y decidió no quedarse de brazos cruzados. Mientras todo el colegio compartía el rumor, ella analizó la polémica foto con detenimiento y reconoció el fondo: era el pasillo trasero del auditorio del colegio. Recordó que unos días antes, los de teatro habían estado moviendo escenografía justo en esa zona.</p>
+
+            <p>Martina fue directamente a hablar con le profesor encargado del auditorio, quien le permitió revisar las grabaciones de las cámaras de seguridad de ese día. El video mostró claramente la verdad: Fabián simplemente había tropezado con un cable suelto y la chica de la foto había intentado ayudarlo a no caer al suelo. La imagen borrosa que se hizo viral era solo un fotograma congelado en el peor ángulo posible de ese torpe accidente.</p>
+
+            <p>Con la evidencia en mano, Martina publicó el video original en la misma red social, desmintiendo la acusación y explicando cómo una imagen sin contexto se convierte fácilmente en una "fake news" diseñada para dañar. Al ver la verdad, los estudiantes comenzaron a disculparse con Fabián por haber creído y compartido el rumor tan rápido sin investigar. El incidente terminó con la cuenta de chismes cerrada y se convirtió en una gran lección para todo el colegio sobre el inmenso peligro de la desinformación.</p>
+        </div>
+
+        <!-- COLUMNA DERECHA: REPRODUCTOR MUSICAL -->
+        <div class="columna-derecha">
+            <h3 style="margin-top: 0; color: #4A3B32;">Zona Indie</h3>
+            
+            <div class="disco-contenedor" id="contenedorDisco">
+                <div class="disco" id="vinilo"></div>
+            </div>
+            
+            <h4 id="nombreArtista" style="margin: 10px 0 5px 0;">Cargando...</h4>
+            <p id="nombreCancion" style="margin: 0 0 15px 0; font-size: 0.9em; color: #6B4F3B;">Cargando...</p>
+            
+            <audio id="miAudio" src=""></audio>
+            
+            <div class="controles">
+                <button onclick="cancionAnterior()" title="Canción anterior">⏮️</button>
+                <button id="btnPlay" onclick="controlarMusica()" title="Reproducir / Pausa">▶️</button>
+                <button onclick="cancionSiguiente()" title="Siguiente canción">⏭️</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <p style="margin: 0 0 5px 0; font-weight: bold;">🎙️ Proyecto Escolar sobre Fake News</p>
+        <p style="margin: 0; font-size: 0.95em;">Integrantes del grupo: <strong>Jordan Cevallos y Luciano Soriano</strong></p>
+    </footer>
+
+    <!-- --- JAVASCRIPT: EL MOTOR DEL REPRODUCTOR --- -->
+    <script>
+        const listaDeCanciones = [
+            {
+                titulo: "Si dices que si",
+                artista: "Ataquemos",
+                archivoAudio: "sidicesquesi.mp3.mp3",
+                fotoUrl: "https://i.scdn.co/image/ab67616d0000b27395b6fd0b619ae2a6ef52a87d" 
+            },
+            {
+                titulo: "Intento 2: Piénsalo bien",
+                artista: "Ataquemos",
+                archivoAudio: "intento2.mp3.mp3",
+                fotoUrl: "https://i.scdn.co/image/ab67616d0000b273e5813928ee431872874a5f01" 
+            },
+            {
+                titulo: "Cuculí",
+                artista: "Ataquemos",
+                archivoAudio: "cuculi.mp3.mp3",
+                fotoUrl: "https://i.scdn.co/image/ab67616d0000b27317f188f4029191a1bd6c87e3" 
+            }
+        ];
+
+        let indiceActual = 0;
+        let audio = document.getElementById("miAudio");
+        let vinilo = document.getElementById("vinilo");
+        let btnPlay = document.getElementById("btnPlay");
+        let txtTitulo = document.getElementById("nombreCancion");
+        let txtArtista = document.getElementById("nombreArtista");
+        let contenedorDisco = document.getElementById("contenedorDisco");
+
+        function cargarCancion(indice) {
+            let cancion = listaDeCanciones[indice];
+            audio.src = cancion.archivoAudio;
+            txtTitulo.textContent = cancion.titulo;
+            txtArtista.textContent = cancion.artista;
+            vinilo.style.backgroundImage = "url('" + cancion.fotoUrl + "')";
+        }
+
+        cargarCancion(indiceActual);
+
+        function controlarMusica() {
+            if (audio.paused) {
+                audio.play();
+                vinilo.classList.add("girando");
+                btnPlay.textContent = "⏸️"; 
+                iniciarNotasMusicales();
+            } else {
+                audio.pause();
+                vinilo.classList.remove("girando");
+                btnPlay.textContent = "▶️"; 
+                detenerNotasMusicales();
+            }
+        }
+
+        function cancionSiguiente() {
+            indiceActual++;
+            if (indiceActual >= listaDeCanciones.length) {
+                indiceActual = 0;
+            }
+            cambiarYReproducir();
+        }
+
+        function cancionAnterior() {
+            indiceActual--;
+            if (indiceActual < 0) {
+                indiceActual = listaDeCanciones.length - 1;
+            }
+            cambiarYReproducir();
+        }
+
+        function cambiarYReproducir() {
+            cargarCancion(indiceActual);
+            audio.play();
+            vinilo.classList.add("girando");
+            btnPlay.textContent = "⏸️";
+            iniciarNotasMusicales();
+        }
+
+        audio.onended = function() {
+            cancionSiguiente();
+        };
+
+        /* --- NOTAS MUSICALES AL REPRODUCIR --- */
+        let intervaloNotas = null;
+
+        function crearNotaMusical() {
+            const nota = document.createElement('div');
+            nota.className = 'nota-musical';
+            const simbolos = ['♪', '♫', '♩', '♬'];
+            nota.innerText = simbolos[Math.floor(Math.random() * simbolos.length)];
+            
+            const rect = contenedorDisco.getBoundingClientRect();
+            // Posicionar las notas saliendo desde el centro del disco con desplazamiento aleatorio suave
+            nota.style.left = (rect.left + (rect.width / 2) + (Math.random() * 40 - 20) + window.scrollX) + 'px';
+            nota.style.top = (rect.top + (rect.height / 2) + window.scrollY) + 'px';
+            
+            document.body.appendChild(nota);
+            setTimeout(() => nota.remove(), 1800);
+        }
+
+        function iniciarNotasMusicales() {
+            if (!intervaloNotas) {
+                intervaloNotas = setInterval(crearNotaMusical, 400);
+            }
+        }
+
+        function detenerNotasMusicales() {
+            clearInterval(intervaloNotas);
+            intervaloNotas = null;
+        }
+    </script>
+
+</body>
+</html>
